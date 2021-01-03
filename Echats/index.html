@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>应用栏 - 含 Tab 选项卡</title>
+  <link rel="stylesheet" href="css/mdui.min.css"/>
+  <script src="js/mdui.min.js"></script>
+  <script src='js/echarts.simple.js'></script>
+  <script type="text/javascript" src="js/echarts.min.js"></script>
+  <script type="text/javascript" src="js/echarts-gl.min.js"></script>
+  <script type="text/javascript" src="js/ecStat.min.js"></script>
+  <script type="text/javascript" src="js/dataTool.min.js"></script>
+  <script type="text/javascript" src="js/china.js"></script>
+  <script type="text/javascript" src="js/world.js"></script>
+  <script type="text/javascript" src="js/api.map.js"></script>
+  <script type="text/javascript" src="js/bmap.min.js"></script>
+  <!-- 很多时候第三方代码的位置对程序也有很大影响，比如上面这个echarts.simple.js看似人畜无害，实则易起冲突 -->
+</head>
+<body style="height: 800px; margin: 0">
+<div class="mdui-appbar">
+  <div class="mdui-tab mdui-color-indigo" mdui-tab>
+    <a href="#example3-tab1" class="mdui-ripple mdui-ripple-white">折线图</a>
+    <a href="#example3-tab2" class="mdui-ripple mdui-ripple-white">饼图</a>
+    <a href="#example3-tab3" class="mdui-ripple mdui-ripple-white">柱状图</a>
+    <a href="#example3-tab4" class="mdui-ripple mdui-ripple-white">旭日图</a>
+    <!-- <a href="#example3-tab5" class="mdui-ripple mdui-ripple-white">主要词频各年对比</a> -->
+    <a href="#example3-tab5" class="mdui-ripple mdui-ripple-white">论文摘要部分词频变化</a>
+    <a href="#example3-tab6" class="mdui-ripple mdui-ripple-white">词云</a>
+  </div>
+</div>
+
+<div class="mdui-container-fluid" style="height: 100%; margin: 0;">
+  <div id="example3-tab1" style="height: 100%; margin: 0;">
+    <div class="mdui-container">
+        <input type="file" id="file1" accept="*" />
+    </div>
+    <div id="container1" style="height: 100%"></div>
+    <script type="text/javascript">
+        // function readFile(filename){
+        //     var fso = new ActiveXObject("Scripting.FileSystemObject");//只有基于IE内核的浏览器才支持该控件
+        //     var f = fso.OpenTextFile(filename,1);
+        //     var s = "";
+        //     while (!f.AtEndOfStream){
+        //         s += f.ReadLine()+"/n";
+        //     }
+        //     f.Close();
+        //     return s;
+        // }
+         var file1 = document.getElementById('file1');
+         file1.onchange = function() {
+             var dom = document.getElementById("container1");
+             var myChart = echarts.init(dom);
+             var option = null;
+             var allData = [];
+             var categoryData = [];
+             var lineData = [];
+             var dataCount = 0;
+             var read1 = this.files[0];
+             let reader1 = new FileReader();	//new一个FileReader对象实例
+             reader1.readAsText(read1);
+             reader1.onload = function () {
+                 allData = (reader1.result).split('\n');
+                 dataCount = allData.length;
+                 console.log(dataCount);
+                 console.log(allData);
+                 console.log(allData[0]);
+                 for (var i = 0; i < dataCount - 1; i++) {
+
+                     var val = allData[i].split(',');
+                     categoryData.push(val[0]);
+                     lineData.push(val[1]);
+                     }
+                     option = {
+                     tooltip: {
+                         trigger: 'axis',
+                         axisPointer: {
+                             type: 'shadow'
+                         }
+                     },
+                     title: {
+                         text: '折线图'
+                     },
+                     legend: {
+                         data: ['line']
+                     },
+                     dataZoom: [{
+                         type: 'slider',
+                         start: 50,
+                         end: 70
+                     }, {
+                         type: 'inside',
+                         start: 50,
+                         end: 70
+                     }],
+                     xAxis: {
+                         data: categoryData
+                     },
+                     yAxis: {},
+                     series: {
+                         type: 'line',
+                         name: 'line',
+                         data: lineData,
+                         itemStyle: {
+                             color: '#ff66f7'
+                         }
+                     }
+                     };;
+                     if (option && typeof option === "object") {
+                     myChart.setOption(option, true);
+                     }
+             }
+         }
+    </script>    
+  </div>
+  <div id="example3-tab2" style="height: 100%; margin: 0;">
+    <div class="mdui-container">
+        <input type="file" id="file2" accept="*" />
+   </div>
+   <div id="container2" style="height: 100%"></div>
+   <script type="text/javascript">
+        var file1 = document.getElementById('file2');
+        file1.onchange = function() {
+            var dom = document.getElementById("container2");
+            var myChart = echarts.init(dom);
+            var option = null;
+            var allData = [];
+            var MyData = [];
+            var dataCount = 0;
+            var read2 = this.files[0];
+            let reader2 = new FileReader();	//new一个FileReader对象实例
+            reader2.readAsText(read2);
+            reader2.onload = function () {
+                allData = (reader2.result).split('\n');
+                dataCount = allData.length;
+                console.log(dataCount);
+                console.log(allData);
+                console.log(allData[0]);
+                for (var i = 0; i < dataCount - 1; i++) {
+                    var val = allData[i].split(',');
+                    var temp = {
+                        value: parseInt(val[1]),
+                        name: val[0]
+                    }
+                    MyData.push(temp);
+                }
+                console.log(MyData);
+                option = {
+                backgroundColor: '#2c343c',
+
+                title: {
+                    text: 'Customized Pie',
+                    left: 'center',
+                    top: 20,
+                    textStyle: {
+                        color: '#ccc'
+                    }
+                },
+
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b} : {c} ({d}%)'
+                },
+
+                visualMap: {
+                    show: false,
+                    min: 80,
+                    max: 800,
+                    inRange: {
+                        colorLightness: [0, 1]
+                    }
+                },
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: '55%',
+                        center: ['50%', '50%'],
+                        data: MyData.sort(function (a, b) { return a.value - b.value; }),
+                        roseType: 'radius',
+                        label: {
+                            color: 'rgba(255, 255, 255, 0.3)'
+                        },
+                        labelLine: {
+                            lineStyle: {
+                                color: 'rgba(255, 255, 255, 0.3)'
+                            },
+                            smooth: 0.2,
+                            length: 10,
+                            length2: 20
+                        },
+                        itemStyle: {
+                            color: '#c23531',
+                            shadowBlur: 200,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        },
+
+                        animationType: 'scale',
+                        animationEasing: 'elasticOut',
+                        animationDelay: function (idx) {
+                            return Math.random() * 200;
+                        }
+                    }
+                ]
+            };;
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+            }
+        }
+   </script>
+  </div>
+  <div id="example3-tab3" style="height: 100%; margin: 0">
+       <div class="mdui-container">
+        <input type="file" id="file3" accept="*" />
+       </div>
+       <div id="container3" style="height: 100%"></div>
+       <script type="text/javascript">
+            var file1 = document.getElementById('file3');
+            file1.onchange = function() {
+                var dom = document.getElementById("container3");
+                var myChart = echarts.init(dom);
+                var app = {};
+                var option = null;
+                var fileData = null;
+                var allData = [];
+                var categoryData = [];
+                var errorData = [];
+                var barData = [];
+                var dataCount = 0;
+                var read3 = this.files[0];
+                let reader3 = new FileReader();	//new一个FileReader对象实例
+                reader3.readAsText(read3);
+                reader3.onload = function () {
+                    allData = (reader3.result).split('\n');
+                    dataCount = allData.length;
+                    console.log(dataCount);
+                    console.log(allData);
+                    console.log(allData[0]);
+                    for (var i = 0; i < dataCount - 1; i++) {
+
+                        var val = allData[i].split(',');
+                        categoryData.push(val[0]);
+                        barData.push(val[1]);
+                        }
+                        option = {
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        title: {
+                            text: '柱状图'
+                        },
+                        legend: {
+                            data: ['bar']
+                        },
+                        dataZoom: [{
+                            type: 'slider',
+                            start: 50,
+                            end: 70
+                        }, {
+                            type: 'inside',
+                            start: 50,
+                            end: 70
+                        }],
+                        xAxis: {
+                            data: categoryData
+                        },
+                        yAxis: {},
+                        series: {
+                            type: 'bar',
+                            name: 'bar',
+                            data: barData,
+                            itemStyle: {
+                                color: '#77bef7'
+                            }
+                        }
+                        };;
+                        if (option && typeof option === "object") {
+                        myChart.setOption(option, true);
+                        }
+                }
+            }
+       </script>
+  </div>
+  <div id="example3-tab4" style="height: 100%; margin: 0">
+    <div class="mdui-container">
+        <input type="file" id="file4" accept="*" />
+    </div>
+    <div id="container4" style="height: 100%"></div>
+    <script type="text/javascript">
+        function Visited(Array_t,name){
+            for(var j = 0; j < Array_t.length; ++j){
+                if(Array_t[j].name == name){
+                    return j;
+                }
+            }
+            return -1;
+        }
+        var file1 = document.getElementById('file4');
+        file1.onchange = function() {
+            var dom = document.getElementById("container4");
+            var myChart = echarts.init(dom);
+            var app = {};
+            var option4 = null;
+            var allData = [];
+            var data = [];
+            var dataCount = 0;
+            var the_number_of_layer = 0;
+            read = this.files[0];
+            let reader = new FileReader();	//new一个FileReader对象实例
+            reader.readAsText(read);
+            reader.onload = function () {
+                allData = (reader.result).split('\n');
+                dataCount = allData.length;
+
+
+                console.log(dataCount);
+                console.log(allData);
+                console.log(allData[0]);
+                
+                the_number_of_layer = (allData[0].split(',')).length - 1;
+                console.log(the_number_of_layer);
+                for (var i = 0; i < dataCount - 1; i++) {//allData是已经以‘\n’分割好的数据
+                    var val = allData[i].split(',');
+                    var temp0 = {//最后一个级别的孩子
+                        name: val[the_number_of_layer],
+                        value: parseInt(val[the_number_of_layer])//注意从文件中读取出来的数字其实都是字符串，需要转化才能成为真正的数字
+                    }
+                    var color_value = i;
+                    var father = {//把最高层和以下的几层统一形式，方便迭代
+                        name: '',
+                        children: data
+                    }
+                    itera = father;
+                    console.log(temp0);
+                    var counter = 0;
+                    while(counter < the_number_of_layer){//从第一列循环到倒数第二列
+                        loac = Visited(itera.children,val[counter]) //若是新的值，则返回-1，否则返回该值对应孩子的位置
+                        console.log(loac);
+                        if(loac == -1){
+                            var temp = {
+                                name: val[counter],
+                                children: []
+                            }
+                            itera.children.push(temp);
+                            itera = itera.children[itera.children.length - 1];//检查下一列
+                        }else{
+                            itera = itera.children[loac];//把下一列设定为该值所对应孩子的位置
+                        }
+                        counter++;
+                    }
+                    itera.children.push(temp0);
+                }
+                console.log(data);
+                var app = {};
+                option4 = {
+                    backgroundColor: '#2c343c',
+                    title: {
+                        text: '旭日图',
+                        subtext: '可以层次化地显示数据占比',
+                        textStyle: {
+                            color: '#ccc',
+                            fontSize: 14,
+                            align: 'center'
+                        },
+                        subtextStyle: {
+                            align: 'center'
+                        },
+                        sublink: 'https://worldcoffeeresearch.org/work/sensory-lexicon/'
+                    },
+                    series: {
+                        type: 'sunburst',
+                        highlightPolicy: 'ancestor',
+                        width: 1000,
+                        height: 800,
+                        data: data,
+                        radius: [0, '95%'],
+                        sort: null,
+                        levels: [{}, {
+                            r0: '15%',
+                            r: '35%',
+                            itemStyle: {
+                                borderWidth: 2
+                            },
+                            label: {
+                                rotate: 'tangential'
+                            }
+                        }, {
+                            r0: '35%',
+                            r: '70%',
+                            label: {
+                                align: 'right'
+                            }
+                        }, {
+                            r0: '70%',
+                            r: '72%',
+                            label: {
+                                position: 'outside',
+                                padding: 3,
+                                silent: false
+                            },
+                            itemStyle: {
+                                borderWidth: 3
+                            }
+                        }]
+                    }
+                };
+                console.log(option4)
+                if (option4 && typeof option4 === "object") {
+                    myChart.setOption(option4, true);
+                }
+            }
+        }
+    </script>
+  </div>
+  <!-- <div id="example3-tab5" style="height: 100%; margin: 0">
+    <div id="container5" style="height: 100%"></div>
+    <script type="text/javascript">
+         var dom = document.getElementById("container5");
+         var myChart = echarts.init(dom);
+         var app = {};
+         var option5 = null;
+         option5 = {
+             title: {
+                 text: '近年来部分词频的变化'
+             },
+             tooltip: {
+                 trigger: 'axis'
+             },
+             legend: {
+                data: ['cancer','lung','patients','cell','NSCLC','cells','Keywords','treatment','tumor','study','expression']
+             },
+             grid: {
+                 left: '3%',
+                 right: '4%',
+                 bottom: '3%',
+                 containLabel: true
+             },
+             toolbox: {
+                 feature: {
+                     saveAsImage: {}
+                 }
+             },
+             xAxis: {
+                 type: 'category',
+                 boundaryGap: false,
+                 data: ['2017', '2018', '2019', '2020']
+             },
+             yAxis: {
+                 type: 'value'
+             },
+             series: [
+                 {
+                     name: 'cancer',
+                     type: 'line',
+                     data: [2242, 9888, 9192, 15172]
+                 },
+                 {
+                     name: 'lung',
+                     type: 'line',
+                     data: [14141, 10039, 9032, 14261]
+                 },
+                 {
+                     name: 'patients',
+                     type: 'line',
+                     data: [2287, 8954, 7788, 13352]
+                 },
+                 {
+                     name: 'cell',
+                     type: 'line',
+                     data: [7464, 5510, 5050, 7576]
+                 },
+                 {
+                     name: 'NSCLC',
+                     type: 'line',
+                     data: [4374, 3677, 3617, 5753]
+                 },
+                 {
+                     name: 'cells',
+                     type: 'line',
+                     data: [4312, 4306, 3793, 5744]
+                 },
+                 {
+                     name: 'keywords',
+                     type: 'line',
+                     data: [14047, 3196, 2995, 4831]
+                 },
+                 {
+                     name: 'treatment',
+                     type: 'line',
+                     data: [11819, 3095, 2918, 4573]
+                 },
+                 {
+                     name: 'tumor',
+                     type: 'line',
+                     data: [4973, 3166, 3098, 4530]
+                 },
+                 {
+                     name: 'study',
+                     type: 'line',
+                     data: [4835, 3116, 2853, 4475]
+                 },
+                 {
+                     name: 'expression',
+                     type: 'line',
+                     data: [4512, 3218, 3040, 4437]
+                 }
+             ]
+         };
+         ;
+         if (option5 && typeof option5 === "object") {
+             myChart.setOption(option5, true);
+         }
+    </script>
+  </div> -->
+  <div id="example3-tab5" style="height: 100%; margin: 0">
+    <div id="container6" style="height: 100%"></div>
+    <script type="text/javascript">
+         var dom = document.getElementById("container6");
+         var myChart = echarts.init(dom);
+         var app = {};
+         var option6 = null;
+         option6 = {
+             title: {
+                 text: '论文摘要部分部分词频的变化'
+             },
+             tooltip: {
+                 trigger: 'axis'
+             },
+             legend: {
+                data: [/*'cancer','lung','patients','cell',*/'NSCLC','cells','Keywords','treatment','tumor','study','expression','CT','therapy','mutation','gene']
+             },
+             grid: {
+                 left: '3%',
+                 right: '4%',
+                 bottom: '3%',
+                 containLabel: true
+             },
+             toolbox: {
+                 feature: {
+                     saveAsImage: {}
+                 }
+             },
+             xAxis: {
+                 type: 'category',
+                 boundaryGap: false,
+                 data: ['2010','2011','2012','2013','2014','2015','2016','2017', '2018', '2019', '2020']
+             },
+             yAxis: {
+                 type: 'value'
+             },
+             series: [
+                //  {
+                //      name: 'cancer',
+                //      type: 'line',
+                //      data: [8556, 9411, 11981, 12437, 12631, 13441, 16602, 15675, 11115, 10291, 17070]
+                //  },
+                //  {
+                //      name: 'lung',
+                //      type: 'line',
+                //      data: [8300, 9455, 11295, 11275, 11324, 12224, 14667, 14198, 10089, 9068, 14326]
+                //  },
+                //  {
+                //      name: 'patients',
+                //      type: 'line',
+                //      data: [7448, 8657, 10748, 9861, 9726, 10600, 12437, 11879, 8988, 7828, 13428]
+                //  },
+                //  {
+                //      name: 'cell',
+                //      type: 'line',
+                //      data: [4394, 4635, 5550, 5886, 5913, 6315, 8074, 7516, 5547, 5083, 7634]
+                //  },
+                 {
+                     name: 'NSCLC',
+                     type: 'line',
+                     data: [2133, 2458, 3217, 3492, 3585, 4420, 5076, 5090, 3812, 3780, 6019]
+                 },
+                 {
+                     name: 'cells',
+                     type: 'line',
+                     data: [3933, 4116, 5069, 5231, 5242, 5652, 7021, 6314, 4439, 3909, 5901]
+                 },
+                 {
+                     name: 'keywords',
+                     type: 'line',
+                     data: [0, 0, 0, 1361, 2171, 2844, 4333, 4374, 3196, 2995, 4831]
+                 },
+                 {
+                     name: 'treatment',
+                     type: 'line',
+                     data: [2691, 3079, 3641, 3280, 3410, 3718, 4569, 4353, 3129, 2955, 4632]
+                 },
+                 {
+                     name: 'tumor',
+                     type: 'line',
+                     data: [3637, 1612, 4135, 4234, 4151, 4338, 4967, 4850, 3214, 3127, 1536]
+                 },
+                 {
+                     name: 'study',
+                     type: 'line',
+                     data: [2353, 2641, 3275, 3106, 3296, 3672, 4303, 4107, 3143, 2894, 4512]
+                 },
+                 {
+                     name: 'expression',
+                     type: 'line',
+                     data: [2555, 2799, 3549, 3514, 3735, 4112, 4694, 4543, 3231, 3070, 4477]
+                 },
+                 {
+                     name: 'CT',
+                     type: 'line',
+                     data: [0, 0, 1131, 0, 0, 0, 1079, 0, 3231, 0, 0]
+                 },
+                 {
+                     name: 'therapy',
+                     type: 'line',
+                     data: [1268, 1451, 1888, 1632, 1684, 1766, 2440, 2470, 1588, 1590, 2381]
+                 },
+                 {
+                     name: 'mutation',
+                     type: 'line',
+                     data: [0, 0, 0, 0, 0, 1044, 1022, 1095, 0, 0, 1149]
+                 },
+                 {
+                     name: 'gene',
+                     type: 'line',
+                     data: [1013, 0, 1287, 1252, 1250, 1310, 1414, 1267, 0, 0, 1221]
+                 }
+             ]
+         };
+         ;
+         if (option6 && typeof option6 === "object") {
+             myChart.setOption(option6, true);
+         }
+    </script>
+  </div>
+  <div id="example3-tab6" style="height: 100%; margin: 0">
+    <div class="mdui-container">
+        <input type="file" id="file6" accept="*" />
+    </div>
+    <div id='main6'></div>
+    <style>
+        #main6 {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+    <script src='js/echarts-wordcloud.js'></script>
+    
+    <script>
+        var file1 = document.getElementById('file6');
+        file1.onchange = function() {
+            var myChart6 = echarts.init(document.getElementById('main6'));
+            var option6 = null;
+            var allData6 = [];
+            var cloudData6 = [];
+            var dataCount6 = 0;
+            var read6 = this.files[0];
+            let reader6 = new FileReader();	//new一个FileReader对象实例
+            reader6.readAsText(read6);
+            reader6.onload = function () {
+                allData6 = (reader6.result).split('\n');
+                dataCount6 = allData6.length;
+                console.log(dataCount6);
+                console.log(allData6);
+                console.log(allData6[0]);
+                for (var i = 0; i < dataCount6 - 1; i++) {
+                    var val = allData6[i].split(',');
+                    var content = {
+                            name: '',
+                            value: 0,
+                        }
+                    content.name = val[0];
+                    content.value = val[1];
+                    cloudData6.push(content);
+                    }
+                option6 = {
+                tooltip: {},
+                series: [ {
+                    type: 'wordCloud',
+                    gridSize: 2,
+                    sizeRange: [12, 50],
+                    rotationRange: [-90, 90],
+                    shape: 'pentagon',
+                    width: 1000,
+                    height: 900,
+                    drawOutOfBound: true,
+                    textStyle: {
+                        normal: {
+                            color: function () {
+                                return 'rgb(' + [
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160)
+                                ].join(',') + ')';
+                            }
+                        },
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    data: cloudData6
+                } ]
+            };
+            myChart6.setOption(option6);
+            //window.onresize = myChart.resize;
+            }
+        }
+    </script>
+  </div>
+</div>
+
+</body>
+</html>
